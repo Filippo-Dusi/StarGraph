@@ -1677,7 +1677,7 @@ QDateEdit::down-arrow:focus {
       <number>500</number>
      </property>
      <property name="value">
-      <number>25000</number>
+      <number>15000</number>
      </property>
      <property name="displayIntegerBase">
       <number>10</number>
@@ -1699,13 +1699,13 @@ QDateEdit::down-arrow:focus {
       <string>10^</string>
      </property>
      <property name="minimum">
-      <number>-8</number>
+      <number>-15</number>
      </property>
      <property name="maximum">
       <number>-1</number>
      </property>
      <property name="value">
-      <number>-6</number>
+      <number>-8</number>
      </property>
      <property name="displayIntegerBase">
       <number>10</number>
@@ -1730,10 +1730,10 @@ QDateEdit::down-arrow:focus {
       <number>1</number>
      </property>
      <property name="maximum">
-      <number>8</number>
+      <number>15</number>
      </property>
      <property name="value">
-      <number>6</number>
+      <number>8</number>
      </property>
      <property name="displayIntegerBase">
       <number>10</number>

@@ -80,7 +80,7 @@ public:
         painter.setFont(scale_font);
 
         //Draws the text
-        painter.drawText(8, 312, "L☉");
+        painter.drawText(2, 312, "logL");
         painter.drawText(8, 32, QString::number(lum_max));
         painter.drawText(8, 608, QString::number(lum_min));
 
@@ -118,8 +118,8 @@ public:
         {
             for(int i = 0; i < 8; i ++)
             {
-                int line_y_positive = CoordsFunctions::diagram_get_y(diagram_height / 2, diagram_height - 64, lum_range, static_cast<double>(MathFunctions::power_of(v_step, i)));
-                int line_y_negative = CoordsFunctions::diagram_get_y(diagram_height / 2, diagram_height - 64, -lum_range , static_cast<double>(MathFunctions::power_of(v_step, i)));
+                int line_y_positive = CoordsFunctions::diagram_get_y(diagram_height / 2, diagram_height - 64, lum_max, static_cast<double>(MathFunctions::power_of(v_step, i)));
+                int line_y_negative = CoordsFunctions::diagram_get_y(diagram_height / 2, diagram_height - 64, lum_min , static_cast<double>(MathFunctions::power_of(v_step, i)));
 
                 glVertex2i(0, line_y_positive);
                 glVertex2i(diagram_width, line_y_positive);
@@ -140,7 +140,15 @@ public:
 
         //Calculates the coordinates of the star
         int star_x = CoordsFunctions::diagram_get_x(temp_min, diagram_width - 64, temp_max - temp_min, star_temperature);
-        int star_y = CoordsFunctions::diagram_get_y(luminosity_offset, diagram_height - 64, lum_max - lum_min, star_luminosity);
+        int star_y;
+        if(star_luminosity < 1)
+        {
+            star_y = CoordsFunctions::diagram_get_y(luminosity_offset, diagram_height - 64, -lum_min, star_luminosity);
+        }
+        else
+        {
+            star_y = CoordsFunctions::diagram_get_y(luminosity_offset, diagram_height - 64, lum_max, star_luminosity);
+        }
 
         //Assign a colour to the star
         double col = (1.0 / 14000) * (star_temperature - 3000);
@@ -171,8 +179,15 @@ public:
             {
                 //Calculates the position of the label
                 int star_x = static_cast<int>(CoordsFunctions::diagram_get_x(temp_min, diagram_width - 64, temp_max - temp_min, list->item(i, 1)->text().toInt())) + 8;
-                int star_y = static_cast<int>(CoordsFunctions::diagram_get_y(diagram_height / 2, diagram_height - 64, lum_max - lum_min, list->item(i, 2)->text().toDouble())) + 8;
-
+                int star_y;
+                if(list->item(i, 2)->text().toDouble() < 1)
+                {
+                    star_y = static_cast<int>(CoordsFunctions::diagram_get_y(diagram_height / 2, diagram_height - 64, -lum_min, list->item(i, 2)->text().toDouble())) + 8;
+                }
+                else
+                {
+                    star_y = static_cast<int>(CoordsFunctions::diagram_get_y(diagram_height / 2, diagram_height - 64, lum_max, list->item(i, 2)->text().toDouble())) + 8;
+                }
                 //Sets the font to use
                 QFont graph_font("Verdana", 10);
                 painter.setFont(graph_font);

@@ -225,6 +225,8 @@ void MainWindow::on_pushButton_add_entry_clicked()
     }
     else
     {
+        ui->table_entries->insertRow(ui->table_entries->rowCount());
+
         //Draws the values to the table
         ui->table_entries->setItem(ui->table_entries->rowCount() - 1, 0, new QTableWidgetItem(name_value));
         ui->table_entries->setItem(ui->table_entries->rowCount() - 1, 1, new QTableWidgetItem(temperature_value));
@@ -323,16 +325,19 @@ void MainWindow::on_actionNew_list_triggered()
 {
     entry_list->clearContents();
     entry_list->setRowCount(0);
+    ui->openGLWidget_diagram->update();
 }
 
 //Opens a '.sgl' file into a new list
 void MainWindow::on_actionOpen_list_triggered()
 {
     FileIOFunctions::open_list(entry_list);
+    ui->openGLWidget_diagram->update();
 }
 
 //Opens a '.csv' file into a new list
 void MainWindow::on_actionImport_list_triggered()
 {
     FileIOFunctions::import_csv(entry_list);
+    ui->openGLWidget_diagram->update();
 }

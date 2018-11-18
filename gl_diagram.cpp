@@ -7,9 +7,9 @@
 
 //Assigns the values to the extern variables
 int temp_min = 3000;
-int temp_max = 25000;
-int lum_min = -6;
-int lum_max = 6;
+int temp_max = 15000;
+int lum_min = -8;
+int lum_max = 8;
 int diagram_width = 640;
 int diagram_height = 640;
 int graph_line_h_step = 2500;
