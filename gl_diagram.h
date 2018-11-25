@@ -15,6 +15,7 @@
 
 //Declares the parameters used for drawing
 extern int temp_min, temp_max, lum_min, lum_max, diagram_height, diagram_width, graph_line_h_step, graph_line_v_step, graph_lines_opacity;
+extern float graph_point_size;
 extern bool graph_show_names, graph_show_h_lines, graph_show_v_lines;
 
 //Class containing the functions used to find the coordinates of a star on the diagram
@@ -92,7 +93,7 @@ public:
         painter.end();
     }
     //Draws the reference lines
-    static void draw_reference_lines(bool vertical, bool horizontal, int h_step,  int v_step, int temp_range, int lum_range, float brightness)
+    static void draw_reference_lines(bool vertical, bool horizontal, int h_step,  int v_step, int temp_range, float brightness)
     {
         //Sets the viewport to match the inner drawing area
         glViewport(32, 32, diagram_width - 64, diagram_height - 64);
@@ -157,7 +158,7 @@ public:
         glColor3f(static_cast<float>(1 - col), static_cast<float>((col / 2) + 0.5), static_cast<float>(col));
 
         //Draws the star to the diagram
-        glPointSize(4.0);
+        glPointSize(graph_point_size);
         glBegin(GL_POINTS);
         glVertex2i(star_x, star_y);
         glEnd();

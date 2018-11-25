@@ -61,6 +61,8 @@ private slots:
 
     void on_actionImport_list_triggered();
 
+    void on_doubleSpinBox_point_size_valueChanged(double arg1);
+
 private:
     Ui::MainWindow *ui;
 

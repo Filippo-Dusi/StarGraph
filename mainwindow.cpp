@@ -11,7 +11,7 @@
 #include "gl_diagram.h"
 
 //Version
-QString stargraph_version = "1.0.1a";
+QString stargraph_version = "1.0.2";
 
 //Assigns the values to the extern variables
 QTableWidget* entry_list = nullptr;
@@ -284,6 +284,13 @@ void MainWindow::on_spinBox_max_luminosity_valueChanged(int arg1)
 void MainWindow::on_checkBox_show_names_stateChanged(int arg1)
 {
     graph_show_names = arg1;
+    ui->openGLWidget_diagram->update();
+}
+
+//Changes the point size on the diagram
+void MainWindow::on_doubleSpinBox_point_size_valueChanged(double arg1)
+{
+    graph_point_size = static_cast<float>(arg1);
     ui->openGLWidget_diagram->update();
 }
 

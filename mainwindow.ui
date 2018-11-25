@@ -645,7 +645,7 @@ QComboBox::down-arrow:focus {
 }
 
 QAbstractSpinBox {
-    padding: 5px;
+    padding: 3px;
     border: 1px solid #76797C;
     background-color: #232629;
     color: #eff0f1;
@@ -1742,9 +1742,9 @@ QDateEdit::down-arrow:focus {
     <widget class="QSpinBox" name="spinBox_line_opacity">
      <property name="geometry">
       <rect>
-       <x>156</x>
-       <y>210</y>
-       <width>101</width>
+       <x>150</x>
+       <y>190</y>
+       <width>111</width>
        <height>22</height>
       </rect>
      </property>
@@ -1774,13 +1774,54 @@ QDateEdit::down-arrow:focus {
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>210</y>
+       <y>190</y>
        <width>121</width>
        <height>20</height>
       </rect>
      </property>
      <property name="text">
       <string>Reference lines opacity:</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_input_point_size">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>160</y>
+       <width>121</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Point size:</string>
+     </property>
+    </widget>
+    <widget class="QDoubleSpinBox" name="doubleSpinBox_point_size">
+     <property name="geometry">
+      <rect>
+       <x>150</x>
+       <y>160</y>
+       <width>111</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <property name="suffix">
+      <string> px</string>
+     </property>
+     <property name="decimals">
+      <number>1</number>
+     </property>
+     <property name="minimum">
+      <double>1.000000000000000</double>
+     </property>
+     <property name="maximum">
+      <double>4.000000000000000</double>
+     </property>
+     <property name="singleStep">
+      <double>0.500000000000000</double>
+     </property>
+     <property name="value">
+      <double>3.000000000000000</double>
      </property>
     </widget>
    </widget>

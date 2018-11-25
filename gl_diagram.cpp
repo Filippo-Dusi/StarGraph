@@ -15,6 +15,7 @@ int diagram_height = 640;
 int graph_line_h_step = 2500;
 int graph_line_v_step = 10;
 int graph_lines_opacity = 25;
+float graph_point_size = 3.0;
 
 bool graph_show_names = false;
 bool graph_show_h_lines = false;
@@ -45,7 +46,7 @@ void GL_Diagram::paintGL()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     //If enabled, draws the reference lines
-    DrawingFunctions::draw_reference_lines(graph_show_v_lines, graph_show_h_lines, graph_line_h_step, graph_line_v_step, temp_max - temp_min, lum_max - lum_min, static_cast<float>(static_cast<double>(graph_lines_opacity) / 100.0));
+    DrawingFunctions::draw_reference_lines(graph_show_v_lines, graph_show_h_lines, graph_line_h_step, graph_line_v_step, temp_max - temp_min, static_cast<float>(static_cast<double>(graph_lines_opacity) / 100.0));
 
     //Draws a star for every row in the 'entry_list' table
     for(int i = 0; i < entry_list->rowCount(); i++)
