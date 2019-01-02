@@ -1475,6 +1475,12 @@ QDateEdit::down-arrow:focus {
        <height>351</height>
       </rect>
      </property>
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Sunken</enum>
+     </property>
      <property name="alternatingRowColors">
       <bool>false</bool>
      </property>
@@ -1552,14 +1558,27 @@ QDateEdit::down-arrow:focus {
     <widget class="QCheckBox" name="checkBox_show_names">
      <property name="geometry">
       <rect>
-       <x>10</x>
+       <x>460</x>
        <y>400</y>
-       <width>121</width>
+       <width>111</width>
        <height>21</height>
       </rect>
      </property>
      <property name="text">
       <string>Show star names</string>
+     </property>
+    </widget>
+    <widget class="QCheckBox" name="checkBox_highlight_selected_star">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>400</y>
+       <width>151</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Highlight the selected star</string>
      </property>
     </widget>
    </widget>
@@ -1824,6 +1843,47 @@ QDateEdit::down-arrow:focus {
       <double>3.000000000000000</double>
      </property>
     </widget>
+    <widget class="QDoubleSpinBox" name="doubleSpinBox_highlighted_area">
+     <property name="geometry">
+      <rect>
+       <x>150</x>
+       <y>220</y>
+       <width>111</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <property name="suffix">
+      <string> px^2</string>
+     </property>
+     <property name="decimals">
+      <number>0</number>
+     </property>
+     <property name="minimum">
+      <double>32.000000000000000</double>
+     </property>
+     <property name="maximum">
+      <double>192.000000000000000</double>
+     </property>
+     <property name="singleStep">
+      <double>16.000000000000000</double>
+     </property>
+     <property name="value">
+      <double>128.000000000000000</double>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_input_point_highlighted_area">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>220</y>
+       <width>121</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Highlighted area</string>
+     </property>
+    </widget>
    </widget>
    <widget class="QGroupBox" name="groupBox_diagram">
     <property name="geometry">
@@ -1898,8 +1958,16 @@ QDateEdit::down-arrow:focus {
     </widget>
     <addaction name="menuShow_reference_lines"/>
    </widget>
+   <widget class="QMenu" name="menuAbout">
+    <property name="title">
+     <string>Info</string>
+    </property>
+    <addaction name="actionManual"/>
+    <addaction name="actionAbout"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuView"/>
+   <addaction name="menuAbout"/>
   </widget>
   <action name="actionNew_list">
    <property name="checkable">
@@ -1990,6 +2058,19 @@ QDateEdit::down-arrow:focus {
    </property>
    <property name="shortcut">
     <string>Ctrl+I</string>
+   </property>
+  </action>
+  <action name="actionManual">
+   <property name="text">
+    <string>Manual</string>
+   </property>
+   <property name="shortcut">
+    <string>F1</string>
+   </property>
+  </action>
+  <action name="actionAbout">
+   <property name="text">
+    <string>About</string>
    </property>
   </action>
  </widget>

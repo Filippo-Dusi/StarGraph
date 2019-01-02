@@ -44,8 +44,11 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 # Stylesheet
-RESOURCES += qdarkstyle/style.qrc
+RESOURCES += qdarkstyle/style.qrc \
+    qdarkstyle/resources.qrc
 
 RC_FILE = icon.rc
 
 LIBS += -lOpengl32
+
+DISTFILES +=

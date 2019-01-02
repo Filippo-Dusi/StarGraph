@@ -2,7 +2,7 @@
     CONVERTER
 */
 
-//This file is included only once in a single compilation
+//This file is included only once per compilation
 #pragma once
 
 //The functions declared in the 'MathFunctions' class are based on those which are located in 'cmath'

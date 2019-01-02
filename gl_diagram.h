@@ -2,21 +2,36 @@
     DIAGRAM PAINTER
 */
 
-#ifndef GL_DIAGRAM_H
-#define GL_DIAGRAM_H
+#pragma once
 
 #include <QFileDialog>
 #include <QOpenGLWidget>
 #include <QTableWidget>
 #include <QPainter>
+#include <QMouseEvent>
 
 //Include the converter
 #include "converter.h"
 
-//Declares the parameters used for drawing
-extern int temp_min, temp_max, lum_min, lum_max, diagram_height, diagram_width, graph_line_h_step, graph_line_v_step, graph_lines_opacity;
+using namespace std;
+
+//Declare the parameters used for drawing
+extern int temp_min, temp_max, lum_min, lum_max, diagram_height, diagram_width, graph_line_h_step, graph_line_v_step, graph_lines_opacity, graph_pos_square_size;
 extern float graph_point_size;
-extern bool graph_show_names, graph_show_h_lines, graph_show_v_lines;
+extern bool graph_show_names, graph_show_h_lines, graph_show_v_lines, graph_highlight_selected_star;
+
+//Initialize the OpenGL widget class
+class GL_Diagram : public QOpenGLWidget
+{
+    Q_OBJECT
+public:
+    explicit GL_Diagram(QWidget *parent = nullptr);
+
+    void initializeGL();
+    void paintGL();
+    void resizeGL(int w, int h);
+};
+
 
 //Class containing the functions used to find the coordinates of a star on the diagram
 class CoordsFunctions
@@ -39,13 +54,13 @@ public:
 class DrawingFunctions
 {
 public:   
-    //Draws the white frame around the diagram
+    //Draw the white frame around the diagram
     static void draw_frame(int offset)
     {
-        //Sets the viewport to match the OpenGL widget
+        //Set the viewport to match the OpenGL widget
         glViewport(0, 0, diagram_width, diagram_height);
 
-        //Draws the four lines which compose the frame
+        //Draw the four lines which compose the frame
         glLineWidth(2.0);
         glColor3f(1.0, 1.0, 1.0);
         glBegin(GL_LINES);
@@ -66,21 +81,21 @@ public:
         glEnd();
     }
 
-    //Draws the scale information
+    //Draw the scale information
     static void draw_scale_info(QPaintDevice *device)
     {
-        //Sets the viewport to match the OpenGL widget
+        //Set the viewport to match the OpenGL widget
         glViewport(0, 0, diagram_width, diagram_height);
 
-        //Creates the painter and sets the viewport
+        //Create the painter and set the viewport
         QPainter painter(device);
         painter.setViewport(0, 0, diagram_width, diagram_height);
 
-        //Sets the font to use
+        //Set the font to use
         QFont scale_font("XITS Math", 12);
         painter.setFont(scale_font);
 
-        //Draws the text
+        //Draw the text
         painter.drawText(2, 312, "logL");
         painter.drawText(8, 32, QString::number(lum_max));
         painter.drawText(8, 608, QString::number(lum_min));
@@ -89,13 +104,13 @@ public:
         painter.drawText(8, 632, QString::number(temp_max) + " K");
         painter.drawText(576, 632, QString::number(temp_min) + " K");
 
-        //Terminates the painter
+        //Terminate the painter
         painter.end();
     }
-    //Draws the reference lines
+    //Draw the reference lines
     static void draw_reference_lines(bool vertical, bool horizontal, int h_step,  int v_step, int temp_range, float brightness)
     {
-        //Sets the viewport to match the inner drawing area
+        //Set the viewport to match the inner drawing area
         glViewport(32, 32, diagram_width - 64, diagram_height - 64);
 
         //Draws the reference lines
@@ -133,13 +148,13 @@ public:
         glEnd();
     }
 
-    //Draws a single star on the diagram
+    //Draw a single star on the diagram
     static void draw_star(int star_temperature, double star_luminosity, int luminosity_offset)
     {
-        //Sets the viewport to match the OpenGL widget
+        //Set the viewport to match the OpenGL widget
         glViewport(32, 32, diagram_width - 64, diagram_height - 64);
 
-        //Calculates the coordinates of the star
+        //Calculate the coordinates of the star
         int star_x = CoordsFunctions::diagram_get_x(temp_min, diagram_width - 64, temp_max - temp_min, star_temperature);
         int star_y;
         if(star_luminosity < 1)
@@ -152,67 +167,102 @@ public:
         }
 
         //Assign a colour to the star
-        double col = (1.0 / 14000) * (star_temperature - 3000);
+        double col = (1.0 / 13000) * (star_temperature - 3000);
 
         //The drawing colour is calculated from the value of 'col' using RGB
         glColor3f(static_cast<float>(1 - col), static_cast<float>((col / 2) + 0.5), static_cast<float>(col));
 
-        //Draws the star to the diagram
+        //Draw the star to the diagram
         glPointSize(graph_point_size);
         glBegin(GL_POINTS);
         glVertex2i(star_x, star_y);
         glEnd();
     }
 
-    //Draws the names of the stars
-    static void draw_star_names(QPaintDevice *device, QTableWidget* list)
+    //Draw the names of the stars
+    static void draw_star_names(QPaintDevice *device, vector<vector<QString>> list)
     {
-        //Sets the viewport to match the OpenGL widget
+        //Set the viewport to match the OpenGL widget
         glViewport(32, 32, diagram_width - 64, diagram_height - 64);
 
-        //Creates the painter and sets the viewport
+        //Create the painter and sets the viewport
         QPainter painter(device);       
         painter.setViewport(32, 32, diagram_width - 64, diagram_height - 64);
 
         if(graph_show_names)
         {
-            for(int i = 0; i < list->rowCount(); i++)
+            for(unsigned i = 0; i < list.size(); i++)
             {
-                //Calculates the position of the label
-                int star_x = static_cast<int>(CoordsFunctions::diagram_get_x(temp_min, diagram_width - 64, temp_max - temp_min, list->item(i, 1)->text().toInt())) + 8;
+                //Calculate the position of the label
+                int star_x = static_cast<int>(CoordsFunctions::diagram_get_x(temp_min, diagram_width - 64, temp_max - temp_min, list[i][1].toInt())) + 8;
                 int star_y;
-                if(list->item(i, 2)->text().toDouble() < 1)
+                if(list[i][2].toDouble() < 1)
                 {
-                    star_y = static_cast<int>(CoordsFunctions::diagram_get_y(diagram_height / 2, diagram_height - 64, -lum_min, list->item(i, 2)->text().toDouble())) + 8;
+                    star_y = static_cast<int>(CoordsFunctions::diagram_get_y(diagram_height / 2, diagram_height - 64, -lum_min, list[i][2].toDouble())) + 8;
                 }
                 else
                 {
-                    star_y = static_cast<int>(CoordsFunctions::diagram_get_y(diagram_height / 2, diagram_height - 64, lum_max, list->item(i, 2)->text().toDouble())) + 8;
+                    star_y = static_cast<int>(CoordsFunctions::diagram_get_y(diagram_height / 2, diagram_height - 64, lum_max, list[i][2].toDouble())) + 8;
                 }
-                //Sets the font to use
+                //Set the font to use
                 QFont graph_font("Verdana", 10);
                 painter.setFont(graph_font);
 
-                //Draws the text
-                painter.drawText(star_x, star_y, list->item(i, 0)->text());
+                //Draw the text
+                painter.drawText(star_x, star_y, list[i][0]);
             }
         }
 
-        //Terminates the painter
+        //Terminate the painter
+        painter.end();
+    }
+
+    //Draw a square indicating the area in which the selected star is located
+    static void draw_star_pos_square(vector<QString> star_params, QPaintDevice *device)
+    {
+        int center_x = static_cast<int>(CoordsFunctions::diagram_get_x(temp_min, diagram_width - 64, temp_max - temp_min, star_params[1].toInt()));
+        int center_y;
+
+        if(star_params[2].toDouble() < 1)
+        {
+            center_y = static_cast<int>(CoordsFunctions::diagram_get_y(diagram_height / 2, diagram_height - 64, -lum_min, star_params[2].toDouble()));
+        }
+        else
+        {
+            center_y = static_cast<int>(CoordsFunctions::diagram_get_y(diagram_height / 2, diagram_height - 64, lum_max, star_params[2].toDouble()));
+        }
+
+        //Set the viewport to match the OpenGL widget
+        glViewport(32, 32, diagram_width - 64, diagram_height - 64);
+
+        glColor3f(1.0, 0.0, 1.0);
+        glBegin(GL_LINES);
+
+        glVertex2i(center_x - graph_pos_square_size, center_y - graph_pos_square_size);
+        glVertex2i(center_x + graph_pos_square_size, center_y - graph_pos_square_size);
+
+        glVertex2i(center_x - graph_pos_square_size, center_y + graph_pos_square_size);
+        glVertex2i(center_x + graph_pos_square_size, center_y + graph_pos_square_size);
+
+        glVertex2i(center_x - graph_pos_square_size, center_y - graph_pos_square_size);
+        glVertex2i(center_x - graph_pos_square_size, center_y + graph_pos_square_size);
+
+        glVertex2i(center_x + graph_pos_square_size, center_y - graph_pos_square_size);
+        glVertex2i(center_x + graph_pos_square_size, center_y + graph_pos_square_size);
+
+        glEnd();
+
+        QPainter painter(device);
+        painter.setViewport(32, 32, diagram_width - 64, diagram_height - 64);
+
+        //Set the font to use
+        QFont graph_font("Verdana", 10);
+        painter.setFont(graph_font);
+
+        //Draw the text
+        painter.drawText(center_x - graph_pos_square_size, center_y - (graph_pos_square_size + 8), star_params[0]);
+
+        //Terminate the painter
         painter.end();
     }
 };
-
-//Initializes the OpenGL widget class
-class GL_Diagram : public QOpenGLWidget
-{
-    Q_OBJECT
-public:
-    explicit GL_Diagram(QWidget *parent = nullptr);
-
-    void initializeGL();
-    void paintGL();
-    void resizeGL(int w, int h);
-};
-
-#endif // GL_DIAGRAM_H

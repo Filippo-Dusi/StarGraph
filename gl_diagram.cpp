@@ -5,7 +5,9 @@
 #include "gl_diagram.h"
 #include "mainwindow.h"
 
-//Assigns the values to the extern variables
+#include <qdebug.h>
+
+//Assign the default values to the extern variables
 int temp_min = 3000;
 int temp_max = 15000;
 int lum_min = -8;
@@ -15,19 +17,21 @@ int diagram_height = 640;
 int graph_line_h_step = 2500;
 int graph_line_v_step = 10;
 int graph_lines_opacity = 25;
+int graph_pos_square_size = 32;
+
 float graph_point_size = 3.0;
 
 bool graph_show_names = false;
 bool graph_show_h_lines = false;
 bool graph_show_v_lines = true;
+bool graph_highlight_selected_star = false;
 
-//Initializes the widget's promotion to 'GL_Diagram'
+//Initialize the widget's promotion to 'GL_Diagram'
 GL_Diagram::GL_Diagram(QWidget *parent) : QOpenGLWidget(parent)
 {
-
 }
 
-//Initializes the OpenGL widget
+//Initialize the OpenGL widget
 void GL_Diagram::initializeGL()
 {
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -39,32 +43,38 @@ void GL_Diagram::initializeGL()
     glLoadIdentity();
 }
 
-//Draws to the OpenGL widget
+//Draw to the OpenGL widget
 void GL_Diagram::paintGL()
 {
-    //Clears the buffer before drawing
+    //Clear the buffer before drawing
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    //If enabled, draws the reference lines
+    //If enabled, draw the reference lines
     DrawingFunctions::draw_reference_lines(graph_show_v_lines, graph_show_h_lines, graph_line_h_step, graph_line_v_step, temp_max - temp_min, static_cast<float>(static_cast<double>(graph_lines_opacity) / 100.0));
 
-    //Draws a star for every row in the 'entry_list' table
-    for(int i = 0; i < entry_list->rowCount(); i++)
+    //Draw a star for each row in the 'entry_table' table
+    for(unsigned i = 0; i < entry_list.size(); i++)
     {
-        DrawingFunctions::draw_star(entry_list->item(i, 1)->text().toInt(), entry_list->item(i, 2)->text().toDouble(), diagram_height/ 2);
+        DrawingFunctions::draw_star(entry_list[i][1].toInt(), entry_list[i][2].toDouble(), diagram_height/ 2);
     }
 
-    //Draws the white frame around the diagram
+    //Draw the white frame around the diagram
     DrawingFunctions::draw_frame(32);
 
-    //Draws the scale information
+    //Draw the scale information
     DrawingFunctions::draw_scale_info(this);
 
-    //If enabled, draws the names of the stars
+    //If enabled, draw the names of the stars
     DrawingFunctions::draw_star_names(this, entry_list);
+
+    //Draw a square around the selected star on the diagram
+    if(selected_star != -1 && graph_highlight_selected_star)
+    {
+        DrawingFunctions::draw_star_pos_square(entry_list[static_cast<unsigned>(selected_star)], this);
+    }
 }
 
-//Resizes the OpenGL widget
+//Resize the OpenGL widget
 void GL_Diagram::resizeGL(int w, int h)
 {
     glViewport(0, 0, w, h);
